@@ -38,6 +38,33 @@ class MoviesModel {
 		}
 	}
 
+	public function editMember($condition) {
+		$this->dbAdapter->dbOpen();
+		$result = $this->dbAdapter->editMember($condition);
+		$this->dbAdapter->dbClose();
+		$this->error = $this->dbAdapter->lastError();
+		
+		return $result;
+	}
+
+	public function editMovie($condition) {
+		$this->dbAdapter->dbOpen();
+		$result = $this->dbAdapter->editMovie($condition);
+		$this->dbAdapter->dbClose();
+		$this->error = $this->dbAdapter->lastError();
+		
+		return $result;
+	}
+
+	public function deleteById($condition) {
+		$this->error = null; //reset the error first
+		$this->dbAdapter->dbOpen();
+		$result = $this->dbAdapter->deleteById($condition);
+		$this->dbAdapter->dbClose();
+		if ($result == false)
+			$this->error = $this->dbAdapter->lastError();
+		return $result;
+	}	
 	
 	public function selectActors() {
 		$this->dbAdapter->dbOpen();

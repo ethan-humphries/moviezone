@@ -40,7 +40,6 @@ class MoviesController
 	*/
 	public function processRequest($request)
 	{
-
 		switch ($request) {
 			case 'CMD_SIGN_UP':
 				$this->showSignUpPage();
@@ -81,9 +80,121 @@ class MoviesController
 			case 'CMD_SHOW_EDIT_MOVIE_FORM':
 				$this->showMovieEditForm();
 				break;
+			case 'CMD_DELETE_MOVIE_BY_ID':
+				$this->handleMovieDeleteRequest();
+				break;
+			case 'CMD_DELETE_MEMBER_BY_ID':
+				$this->handleMemberDeleteRequest();
+				break;
+			case 'CMD_EDIT_MOVIE':
+				$this->handleEditMovieRequest();
+				break;
+			case 'CMD_EDIT_MEMBER':
+				$this->handleEditMemberRequest();
+				break;
 			default:
 				$this->showLogInPage();
 				break;
+		}
+	}
+
+	// params += '&member_id=' + member_id;
+    // params += '&surname=' + surname;
+    // params += '&other_name=' + other_name;
+    // params += '&password=' + password;
+    // params += '&occupation=' + occupation;
+    // params += '&contact_method=' + contact_method;
+    // params += '&email=' + email;
+    // params += '&mobile=' + mobile;
+    // params += '&landline=' + landline;
+
+	private function handleEditMemberRequest() {
+		$condition =  array();
+		$response = null;
+		if (!empty($_REQUEST['member_id'])) {
+			$condition['member_id'] = $_REQUEST['member_id'];
+			$condition['surname'] = $_REQUEST['surname'];
+			$condition['other_name'] = $_REQUEST['other_name'];
+			$condition['password'] = $_REQUEST['password'];
+			$condition['occupation'] = $_REQUEST['occupation'];
+			$condition['contact_method'] = $_REQUEST['contact_method'];
+			$condition['email'] = $_REQUEST['email'];
+			$condition['mobile'] = $_REQUEST['mobile'];
+			$condition['landline'] = $_REQUEST['landline'];
+			$response = $this->model->editMember($condition);
+		}
+		if ($response != null) {
+			$this->view->showError('Record edited');
+		} else {
+			$error = $this->model->getError();
+			if ($this->model->getError() == 'SQLSTATE[HY000]: General error') {
+				$error = 'Member Updated';
+			}
+			$this->view->showError($error);
+		}
+	}
+
+	private function handleEditMovieRequest() {
+		$condition =  array();
+		$response = null;
+		if (!empty($_REQUEST['movie_id'])) {
+			$condition['movie_id'] = $_REQUEST['movie_id'];
+			$condition['DVD_rental_price'] = $_REQUEST['DVD_rental_price'];
+			$condition['DVD_purchase_price'] = $_REQUEST['DVD_purchase_price'];
+			$condition['numDVD'] = $_REQUEST['numDVD'];
+			$condition['BluRay_rental_price'] = $_REQUEST['BluRay_rental_price'];
+			$condition['BluRay_purchase_price'] = $_REQUEST['movie_id'];
+			$condition['numBluRay'] = $_REQUEST['numBluRay'];
+			$response = $this->model->editMovie($condition);
+		}
+		if ($response != null) {
+			$this->view->showError('Record edited');
+		} else {
+			$error = $this->model->getError();
+			if ($this->model->getError() == 'SQLSTATE[HY000]: General error') {
+				$error = 'Movie Updated';
+			}
+			$this->view->showError($error);
+		}
+	}
+
+	private function handleMovieDeleteRequest()
+	{
+		$condition = array();
+		if (!empty($_REQUEST['movie_id'])) {
+			$condition['movie_id'] = $_REQUEST['movie_id'];
+			//call the dbAdapter function
+			$response = $this->model->deleteById($condition);
+			if ($response != false) {
+				$this->view->showError('Record deleted');
+			} else {
+				$error = $this->model->getError();
+				if ($this->model->getError() == 'SQLSTATE[HY000]: General error') {
+					$error = 'Movie Deleted';
+				}
+				$this->view->showError($error);
+			}
+		}
+	}
+
+	private function handleMemberDeleteRequest()
+	{
+		$condition = array();
+		if (!empty($_REQUEST['member_id'])) {
+			$condition['member_id'] = $_REQUEST['member_id'];
+			//call the dbAdapter function
+			$result = $this->model->deleteById($condition);
+			if ($result != null) {
+				$error = $this->model->getError();
+				if ($error != null)
+					$this->view->showError($error);
+			} else {
+				$error = $this->model->getError();
+				if ($this->model->getError() == 'SQLSTATE[HY000]: General error') {
+					$error = 'Member Deleted';
+				}
+				$this->view->showError($error);
+			}
 		}
 	}
 
@@ -134,7 +245,8 @@ class MoviesController
 		}
 	}
 
-	private function handleSelectMovieRequest() {
+	private function handleSelectMovieRequest()
+	{
 		$movies = $this->model->selectMovies();
 		if ($movies != null) {
 			$this->view->showMovies($movies);

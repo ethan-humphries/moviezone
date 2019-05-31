@@ -137,6 +137,61 @@ class DBAdaper {
 		return $result;			
 	}
 
+	public function filterMoviesForCheckout($condition) {
+		$result = null;
+		$cond = $condition['movie_id'];
+		$this->dbError = null; //reset the error message before any execution
+		if ($this->dbConn != null) {		
+			try {
+				$smt = $this->dbConn->prepare(
+					"SELECT * FROM movie_detail_view Where '$cond'");							  				
+				//Execute the query
+				$smt->execute();
+				$result = $smt->fetchAll(PDO::FETCH_ASSOC);	
+				//use PDO::FETCH_BOTH to have both column name and column index
+				//$result = $sql->fetchAll(PDO::FETCH_BOTH);
+			}catch (PDOException $e) {
+				//Return the error message to the caller
+				$this->dbError = $e->getMessage();
+				$result = null;
+			}
+		} else {
+			$this->dbError = MSG_ERR_CONNECTION;
+		}
+	
+		return $result;			
+	}
+
+	public function handleCustomerLogin($user) {
+		$result = null;
+		$username = $user['username'];
+		$password = $user['password'];
+		$this->dbError = null; //reset the error message before any execution
+		if ($this->dbConn != null) {		
+			try {
+				//Make a prepared query so that we can use data binding and avoid SQL injections. 
+				//(modify suit the A2 member table)
+				$sql = "SELECT * FROM member WHERE username = '$username' AND password = '$password' ";
+				// .$this->sqlBuildConditionalClauseForLogin($user, 'AND');
+				$smt = $this->dbConn->prepare($sql);
+												  
+				//Execute the query
+				$smt->execute();
+				$result = $smt->fetchAll(PDO::FETCH_ASSOC);	
+				//use PDO::FETCH_BOTH to have both column name and column index
+				//$result = $sql->fetchAll(PDO::FETCH_BOTH);
+			}catch (PDOException $e) {
+				//Return the error message to the caller
+				$this->dbError = $e->getMessage();
+				$result = null;
+			}
+		} else {
+			$this->dbError = MSG_ERR_CONNECTION;
+		}
+	
+		return $result;
+	}
+
 	public function movieFilter($condition) {
 		$result = null;
 		$this->dbError = null; //reset the error message before any execution
@@ -290,31 +345,6 @@ class DBAdaper {
 		return $result;		
 	}
 
-	public function logIn($username, $password) {
-		$result = null;
-		$this->dbError = null; //reset the error message before any execution
-		if ($this->dbConn != null) {		
-			try {
-				//Make a prepared query so that we can use data binding and avoid SQL injections. 
-				//(modify suit the A2 member table)
-				$smt = $this->dbConn->prepare(
-					"SELECT username, password From member where username = '$username' and password = '$password'");							  				
-				//Execute the query
-				$smt->execute();
-				$result = $smt->fetchAll(PDO::FETCH_ASSOC);	
-				//use PDO::FETCH_BOTH to have both column name and column index
-				//$result = $sql->fetchAll(PDO::FETCH_BOTH);
-			}catch (PDOException $e) {
-				//Return the error message to the caller
-				$this->dbError = $e->getMessage();
-				$result = null;
-			}
-		} else {
-			$this->dbError = MSG_ERR_CONNECTION;
-		}
-		return $result;		
-	}
-
 }
 /*---------------------------------------------------------------------------------------------- 
                                          TEST FUNCTIONS
@@ -325,4 +355,3 @@ class DBAdaper {
 
     }
     //testDBA();
-?>

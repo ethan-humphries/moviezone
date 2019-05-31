@@ -15,7 +15,7 @@ require_once('moviezone_admin_main.php');
 	<link rel="stylesheet" type="text/css" href="css/moviezone_admin.css">
 	<script src="js/ajax.js"></script>
 	<script src="js/moviezone.js"></script>
-	<script>
+	<!-- <script>
     //simply goes back to index file index.php
     function login_btnCancelClicked() {
         window.location.replace('../index.php');
@@ -33,7 +33,7 @@ require_once('moviezone_admin_main.php');
             document.getElementById('admin_rightcol').innerHTML = data;
         }
     }
-</script>
+</script> -->
 </head>
 
 <body>
@@ -48,27 +48,28 @@ require_once('moviezone_admin_main.php');
 	<div id="admin_rightcol">
 
 		<?php
-		/*Perform session checking, if already logged in then just put user through
-	  otherwise, show login dialog */
-		$php_version = phpversion();
-		if (floatval($php_version) >= 5.4) {
-			if (session_status() == PHP_SESSION_NONE) { //need the session to start
-				session_start();
-			}
-		} else {
-			if (session_id() == '') {
-				session_start();
-			}
-		}
+	// 	/*Perform session checking, if already logged in then just put user through
+	//   otherwise, show login dialog */
+	// 	$php_version = phpversion();
+	// 	if (floatval($php_version) >= 5.4) {
+	// 		if (session_status() == PHP_SESSION_NONE) { //need the session to start
+	// 			session_start();
+	// 		}
+	// 	} else {
+	// 		if (session_id() == '') {
+	// 			session_start();
+	// 		}
+	// 	}
 
-		if (isset($_SESSION['authorised'])) {
-			$controller->showDasboard();
-			$controller->loadLeftNav();
-			die(); //and terminate
-		} else {
-			$controller->showLogInPage();
-		}
-		//otherwise, show the below login page
+	// 	if (isset($_SESSION['authorised'])) {
+	// 		$controller->showDasboard();
+	// 		$controller->loadLeftNav();
+	// 		die(); //and terminate
+	// 	} else {
+	// 		$controller->showLogInPage();
+	// 	}
+	// 	//otherwise, show the below login page
+	$controller->showLogInPage();
 		?>
 
 	</div>

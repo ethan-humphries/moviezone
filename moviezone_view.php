@@ -35,6 +35,15 @@ class MoviesView {
 		}
 	}
 
+	public function showMoviesForAccount($movie_array) {
+		if (!empty($movie_array)) {
+			print"<h1>Movies</h1>";
+			foreach ($movie_array as $movie) {
+				$this->printMovieForAccount($movie);
+			}
+		}
+	}
+
 	public function showNewMovies($movie_array) {
 		if (!empty($movie_array)) {
 			print"<h1>New Releases</h1>";
@@ -44,10 +53,19 @@ class MoviesView {
 		}
 	}
 
+	public function showMoviesForCheckout($movie_array) {
+		if (!empty($movie_array)) {
+			print"<h1>New Releases</h1>";
+			foreach ($movie_array as $movie) {
+				$this->printCheckedOutMovies($movie);
+			}
+		}
+	}
+
 	public function showNewMoviesForLeftCol($movie_array) {
 		$i = 0;
 		if (!empty($movie_array)) {
-			print"<h2>New Releases</h2 style='width: 150px;'>";
+			print"<span style='float:left;'>logged-in<br></span><br><br><h1>Checkout</h1>";
 			foreach ($movie_array as $movie) {
 				if($i < 2) {
 				$this->printMovieInHtml($movie);
@@ -56,6 +74,37 @@ class MoviesView {
 			}
 		}
 	}
+
+	private function printCheckedOutMovies($movie){
+		if (empty($movie['photo'])) {
+			$photo = "default.jpg";
+		} else {
+			$photo = $movie['thumbpath'];
+		}
+		$title = $movie['title'];
+		$tagline = $movie['tagline'];	
+		$year = $movie['year'];
+		$dvdStock = $movie['numDVD'];
+		$bluRayStock = $movie['numBluRay'];
+		$movieId = $movie['movie_id'];
+		print "
+			<p>This module is currently being built and has not yet been completed. You have chosen the following movies to be booked/purchased:</p>
+			<form id='joinform' name='joinform' method='' action=''>
+			<fieldset>
+			<legend>Movie $movieId Information:</legend>
+			<img src='img/movies/$photo' alt='photo' class='moviePoster' height='150' width='105'>
+				<label for='title'>Title:</label>
+				<input type='text' name='title' size='45' value='$title' disabled=''> 
+				</div><div>
+				<label for='year'>Year:</label>
+				<input type='text' name='year' size='4' value='$year' disabled=''>
+				</div><div>
+				<label for='tagline'>Tag line:</label>
+				<input type='text' name='tagline' size='60' value='$tagline' disabled=''>
+				</div><div><br>$dvdStock DVD's are available and $bluRayStock BluRay's are available<br></div></fieldset>
+			</form>
+		";
+		}
 	
 	private function printMovieInHtml($movie) {
 		
@@ -87,6 +136,60 @@ class MoviesView {
 		<fieldset>
 			<legend>$title</legend>
 				<div class='movie_card'>	
+						<img src= 'img/movies/$photo' alt='photo' class='moviePoster' style = 'max-height: 170px;'>
+					<div class='content'>
+						<b><span class = 'movieHeading'>$rentalPeriod</span><br>
+						<b><span class = 'movieHeading'>Genre:</span> $genre</b><br>
+						<span class = 'movieHeading'>Year:</span> $year<br>
+						<span class = 'movieHeading'>Director:</span> $director<br>
+						<span class = 'movieHeading'>Classification:</span> $classification<br>
+						<span class = 'movieHeading'>Starring:</span> $starring<br>
+						<span class = 'movieHeading'>Studio:</span> $studio<br> 
+						<span class = 'movieHeading'>Tagline:</span> $tagline<br><br> $plot <br><br>
+						<span class = 'movieHeading'>Rental:</span> DVD - $$rentalPriceDVD BlueRay - $$bluRayPriceRental<br>
+						<span class = 'movieHeading'>Purchase:</span> DVD - $$purchasePriceDVD BlueRay - $$bluRayPricePurchase<br>
+						<span class = 'movieHeading'>Avaliability:</span> DVD - $dvdStock BlueRay - $bluRayStock<br>
+					</div>
+				</div>
+		</fieldset></p>";
+	}	
+
+	private function printMovieForAccount($movie) {
+		
+		if (empty($movie['photo'])) {
+			$photo = "default.jpg";
+		} else {
+			$photo = $movie['thumbpath'];
+		}
+		$movie_id = $movie['movie_id'];
+		$title = $movie['title'];
+		$tagline = $movie['tagline'];
+		$genre = $movie['genre'];		
+		$year = $movie['year'];
+		$director = $movie['director'];
+		$classification = $movie['classification'];		
+		$starring = $movie['star1'] . ' ' . $movie['star2'] . ' ' . $movie['star3'] . ' ' . $movie['costar1'] . ' ' . $movie['costar2'] . ' ' . $movie['costar3'];
+		$rentalPeriod = $movie['rental_period'];
+		$studio = $movie['studio'];
+		$rentalPriceDVD = $movie['DVD_rental_price'];
+		$purchasePriceDVD = $movie['DVD_purchase_price'];
+		$bluRayPriceRental = $movie['BluRay_rental_price'];
+		$bluRayPricePurchase = $movie['BluRay_purchase_price'];
+		$dvdStock = $movie['numDVD'];
+		$bluRayStock = $movie['numBluRay'];
+		$plot = $movie['plot'];
+		$photo = $movie['thumbpath'];
+
+		print "
+		<p>
+		<fieldset>
+			<legend>$title</legend>";
+			if($dvdStock == 0  && $bluRayStock == 0) {
+				print "<button disabled =''>Out of stock</button>";
+			} else {
+				print"<button onclick='rentMovie($movie_id)'>Rent/Buy</button>";
+			}
+			print"<br><br><div class='movie_card'>	
 						<img src= 'img/movies/$photo' alt='photo' class='moviePoster' style = 'max-height: 170px;'>
 					<div class='content'>
 						<b><span class = 'movieHeading'>$rentalPeriod</span><br>

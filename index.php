@@ -28,6 +28,7 @@ require_once('moviezone_main.php');
 		<!-- load the navigation panel by embedding php code -->
 		<?php $controller->loadLeftNavPanel()?>
 	</div>
+	<h2 id="movies_rented"></h2>
 	<!-- right area -->	
 	<div id="rightcol">
 	</div>

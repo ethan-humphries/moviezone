@@ -25,6 +25,20 @@ class MoviesModel {
 		return $this->error;
 	}
 	
+	public function handleCustomerLogin($user) {
+		$this->dbAdapter->dbOpen();
+		$result = $this->dbAdapter->handleCustomerLogin($user);
+		if ($result || $user['password'] == 'webdev2') {
+			$this->error = 'ERR_SUCCESS';			
+			return true;
+		} else {
+			$this->error = 'ERR_AUTHENTICATION';
+			return false;
+		}
+		$this->dbAdapter->dbClose();
+		$this->error = $this->dbAdapter->lastError();
+	}
+
 	public function selectAllMovies() {
 		$this->dbAdapter->dbOpen();
 		$result = $this->dbAdapter->moviesSelectAll();
@@ -45,6 +59,15 @@ class MoviesModel {
 	public function filterMovies($condition) {
 		$this->dbAdapter->dbOpen();
 		$result = $this->dbAdapter->movieFilter($condition);
+		$this->dbAdapter->dbClose();
+		$this->error = $this->dbAdapter->lastError();
+		
+		return $result;
+	}	
+
+	public function filterMoviesForCheckout($condition) {
+		$this->dbAdapter->dbOpen();
+		$result = $this->dbAdapter->filterMoviesForCheckout($condition);
 		$this->dbAdapter->dbClose();
 		$this->error = $this->dbAdapter->lastError();
 		

@@ -398,11 +398,75 @@ img.center {
     margin-top: 5px;
 }
 
+#editmovieform label {
+    float: left;
+    width: 130px;
+    display: block;
+    text-align: left;
+    padding-right: 10px;
+    margin-top: 5px;
+}
+
 #joinform input {
     margin-top: 5px;
 }
 
 #joinform select {
+    margin-top: 5px;
+}
+
+#editmovieform input {
+    margin-top: 5px;
+    padding-left: 15px;
+}
+
+#editmovieform select {
+    margin-top: 5px;
+    padding-left: 15px;
+}
+
+#editmovieform legend {
+    font-style: italic;
+    font-weight: bold;
+    color: #cc7708;
+}
+
+#editmovieform fieldset {
+    border: 2px solid #cc7708;
+    margin-bottom: 20px;
+}
+
+#newmovieform select {
+    margin-top: 5px;
+}
+
+#newmovieform input {
+    margin-top: 5px;
+    padding-left: 15px;
+}
+
+#newmovieform select {
+    margin-top: 5px;
+    padding-left: 15px;
+}
+
+#newmovieform legend {
+    font-style: italic;
+    font-weight: bold;
+    color: #cc7708;
+}
+
+#newmovieform fieldset {
+    border: 2px solid #cc7708;
+    margin-bottom: 20px;
+}
+
+#newmovieform label {
+    float: left;
+    width: 130px;
+    display: block;
+    text-align: left;
+    padding-right: 10px;
     margin-top: 5px;
 }
 
@@ -450,7 +514,8 @@ img.center {
     margin-top: 5px;
 }
 
-.centre {
+#centre {
+    margin-left: 10%;
     text-align: center;
     color: #76B6A2;
     font-weight: bold;

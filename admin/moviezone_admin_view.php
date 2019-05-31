@@ -27,7 +27,7 @@ class MoviesView
 
 	public function showError($error)
 	{
-		print "<h2>Error: $error</h2>";
+		print "<h2>Result: $error</h2>";
 	}
 
 
@@ -66,29 +66,30 @@ class MoviesView
 	public function showMembers($members_array)
 	{
 		if (!empty($members_array)) {
-			print "<select id ='id_member' style = 'min-width: 100px;'>";
+			print "<select onchange='updateMemberForm(value)' name='member' id='id_member' style = 'min-width: 100px;'>";
 			foreach ($members_array as $member) {
+				$memberId = $member['member_id'];
 				$memberName = $member['surname'];
 				$otherName = $member['other_name'];
 				$userName = $member['username'];
-				print "<option value = " . $member['member_id'] . ">$otherName $memberName - $userName</option>";
+				print "<option value = '$memberId'>$otherName $memberName - $userName</option>";
 			}
 			print "</select> &nbsp";
-			print "<button style = 'min-width: 100px;' onclick = 'updateMemberForm(" . $member['member_id'] . ")' >Search</button>";
+			print "<p>Choose a member to begin...</p>";
 		}
 	}
 
 	public function showMovies($movies_array)
 	{
 		if (!empty($movies_array)) {
-			print "<select id ='movie_id' style = 'min-width: 100px;'>";
+			print "<select onchange='updateMovieForm(value)' id ='movie_id' style = 'min-width: 100px;'>";
 			foreach ($movies_array as $movie) {
 				$title = $movie['title'];
 				$year = $movie['year'];
 				print "<option value = " . $movie['movie_id']. ">$title - $year</option>";
 			}
 			print "</select> &nbsp";
-			print "<button style = 'min-width: 100px;' onclick = 'updateMovieForm(" . $movie['movie_id'] . ")' >Search</button>";
+			print "<p>Choose a movie to begin...</p>";
 		}
 	}
 
@@ -117,9 +118,9 @@ class MoviesView
 		$occupation = $member['occupation'];
 		$joinDate = $member['join_date'];
 
-		print "<form name=;joinform' id='joinform' method='post'>
+		print "<form name=editmemberform' id='editmemberform' method='post'>
 		<input type='hidden' name='action' value='edit_member'>
-		<input type='hidden' name='update' value='$memberId'>
+		<input type='hidden' name='member_id' value='$memberId'>
 		<fieldset>
 			<legend>Member ID: $memberId</legend>
 			<div>
@@ -128,7 +129,7 @@ class MoviesView
 			</div>
 			<div>
 			   <label>Other Names:</label>
-			   <input type='text' name='othername' size='50' maxlength='60' value='$otherName' required=''>
+			   <input type='text' name='other_name' size='50' maxlength='60' value='$otherName' required=''>
 			</div>
 			<div>
 			   <label>Username:</label>
@@ -162,7 +163,7 @@ class MoviesView
 		 <fieldset>
 			<legend>Contact details</legend>
 			<div>
-			   <label>Contact method:</label><select name='contactmethod'>
+			   <label>Contact method:</label><select name='contact_method'>
 			   <option value='$email'>email</option>
 			   <option value='$landline' selected=''>landline</option>
 			   <option value='$mobile'>mobile</option></select></div>
@@ -178,7 +179,7 @@ class MoviesView
 			</div>
 			<div>
 			   <label>Landline:</label>
-			   <input type ='text' name='phone'  size='13' maxlength='13' value='$landline'>
+			   <input type ='text' name='landline'  size='13' maxlength='13' value='$landline'>
 			   <span style= 'color:red'>Format 0[2,3,6,7,8 or 9]XXXXXXXX where X is a digit</span>
 			</div>
 		 </fieldset> 
@@ -200,9 +201,11 @@ class MoviesView
 			   <input type='text' name ='postcode' size='4' maxlength='4' value='$postcode'> <span style='color:red'>
 				Format four digits only</span></div>
 		 </fieldset><div>
-			<input type='submit' value='Update User'>
+
 		  </div>
-	   </form>";
+		</form>
+		<input type='submit' value='Update Member' onclick='editMemberData()'>&nbsp;
+		<button onclick='deleteMemberById($memberId)'>Delete Member</button>";
 	}
 
 	public function showMovieAddEditForm($movie)
@@ -213,7 +216,97 @@ class MoviesView
 	}
 
 	public function printEditMovieForm($movie) {
-		print "".$movie['title']."";
-	}
+		$movieId = $movie['movie_id'];
+		$title = $movie['title'];
+		$tagline = $movie['tagline'];		
+		$year = $movie['year'];
+		$photo = $movie['thumbpath'];
+		$rentalPeriod = $movie['rental_period'];
+		$rentalPriceDVD = $movie['DVD_rental_price'];
+		$purchasePriceDVD = $movie['DVD_purchase_price'];
+		$bluRayPriceRental = $movie['BluRay_rental_price'];
+		$bluRayPricePurchase = $movie['BluRay_purchase_price'];
+		$dvdStock = $movie['numDVD'];
+		$bluRayStock = $movie['numBluRay'];
+		$dvdRented = $movie['numDVDout'];
+		$bluRayRented = $movie['numBluRayOut'];
+		// action='/moviezone/admin/html/result.php'
+		print " 
+         <span style='float:left; color:red; font-weight:bold'><br>Admin-mode</span><br><h1>Edit Movie A $title</h1><div id='compnote'>
+			<p>* = Compulsory field</p></div>
+			<form id='editmovieform' name='editmovieform' method='post' enctype='multipart/form-data'>
+         <input type='hidden' name='action' value='update_movie'>
+         <input type='hidden' name='id' value='30'>
+         <input type='hidden' name='title' value='$title'>
+         <fieldset>
+			<legend>Movie Information:</legend><img src='img/movies/$photo' alt='photo' class='moviePoster' alt='Movie poster' height='150' width='105'>
+			<div id='titlerow'>
+				<label for='movie_id'>Movie ID:</label>
+				<input type='text' name='movie_id' size='45' value='$movieId' disabled=''> 
+				</div><div id='titlerow'>
+				<label for='title'>Title:</label>
+				<input type='text' name='title' size='45' value='$title' disabled=''> 
+				</div><div id='yearrow'>
+				<label for='year'>Year:</label>
+				<input type='text' name='year' size='4' value='$year' disabled='''
+				</div><div id='taglinerow'>
+				<label for='tagline'>Tag line:</label>
+				<input type='text' name='tagline' size='60' value='$tagline' disabled=''>
+				</div>
+			 </fieldset>
+			 <fieldset id='stockfield'><legend>Stock Information:</legend><div>
+        <label for='rental_period'>Rental Period</label>
+		  <select name='rental_period'><option value='3 Day'>3 Day</option>
+		  <option value='Weekly' selected=''>Weekly</option>
+		  <option value='Overnight'>Overnight</option>
+		  </select><span style='color:red;'> *</span></div><br>
+		  <fieldset><legend>DVD:</legend><div id='dvdrentalrow'>
+				<label for='dvdrental'>Rental price:</label>
+				<input type='text' name='dvdrental' size='5' maxlength='10' value='$rentalPriceDVD'>
+				<span style='color:red;'>*</span>
+			</div><div id='dvdpurchaserow'>
+				<label for='dvdpurchase'>Purchase price:</label>
+				<input type='text' name='dvdpurchase' size='5' maxlength='10' value='$purchasePriceDVD'>
+				<span style='color:red;'>*</span>
+			</div><div id='dvdstockrow'>
+				<label for='dvdstock'>In-stock:</label>
+				<input type='text' name='dvdstock' size='5' maxlength='10' value='$dvdStock'>
+				<span style='color:red;'>*</span>
+			</div><div id='dvdrentedrow'>
+				<label for='dvdrented'>Currently rented:</label>
+				<input type='text' name='dvdrented' size='5' maxlength='10' value='$dvdRented'>
+				<span style='color:red;'> * Overwrite only if a rental has failed to be returned.</span>
+			</div><div id='dvdshelfrow'>
+				<label for='dvdrented'>In Store:</label>
+				<input type='text' name='dvdself' size='5' maxlength='10' value='$dvdStock' disabled=''>
+			</div></fieldset>
+			<fieldset><legend>BluRay:</legend><div id='blurentalrow'>
+				<label for='blurental'>Rental price:</label>
+				<input type='text' name='blurental' size='5' value='$bluRayPriceRental'>
+				<span style='color:red;'>*</span>
+			</div><div id='blupurchaserow'>
+				<label for='blupurchase'>Purchase price:</label>
+				<input type='text' name='blupurchase' size='5' value='$bluRayPricePurchase'>
+				<span style='color:red;'>*</span>
+			</div><div id='blustockrow'>
+				<label for='blustock'>In-stock:</label>
+				<input type='text' name='blustock' id='blustock' size='5' value='$bluRayStock'>
+				<span style='color:red;'>*</span>
+			</div><div id='blurentedrow'>
+				<label for='blurented'>Currently rented:</label>
+				<input type='text' name='blurented' size='5' value='$bluRayRented'>
+				<span style='color:red;'> * Overwrite only if a rental has failed to be returned.</span>
+			</div><div id='blurentedrow'>
+				<label for='blurented'>In Store:</label>
+				<input type='text' name='blurented' size='5' value='$bluRayStock' disabled=''>
+			</div></fieldset>
+		  </fieldset><div>
 
+			 </div><br>
+			 </form>
+			 <input type='submit' value='Update Movie' onclick ='editMovieData()'> &nbsp;
+			 <button onclick='deleteMovieById($movieId)'>Delete Movie</button> 
+		";
+		
+	}
 }
